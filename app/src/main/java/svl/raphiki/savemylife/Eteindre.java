@@ -6,6 +6,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import svl.raphiki.savemylife.external.EndPoint;
+
 public class Eteindre extends AppCompatActivity {
 
     @Override
@@ -17,7 +25,19 @@ public class Eteindre extends AppCompatActivity {
 
     private void fillSpinner() {
         Spinner pc = (Spinner) findViewById(R.id.pc);
-        SpinnerAdapter adapteur = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, new String[]{"Test", "Test2"});
-        pc.setAdapter(adapteur);
+        pc.setAdapter(getAdapter());
+    }
+
+    private SpinnerAdapter getAdapter() {
+        try {
+            Map<String, InetAddress> hosts = EndPoint.getAvailableHosts();
+
+            List<String> entries = Collections.emptyList();
+            entries.addAll(hosts.keySet());
+            return new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, entries);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
